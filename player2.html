@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOATIVO | Player</title>
+<link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<style>
+html, body {background:#000;width:100%;height:100%;margin:0;overflow: hidden;}
+.video-box {background:#000;width:100%;height:100%;}
+.video-box iframe {width:100%;height:100%;border:0;display:block;}
+</style>
+</head>
+<body>
+<div class="video-box" id="player-target"></div>
+<script>
+(function loadStream() {
+const params = new URLSearchParams(window.location.search);
+let stream = params.get('r') || params.get('embed') || params.get('url');
+const type = params.get('type');
+const target = document.getElementById('player-target');
+if (stream) {
+try {
+stream = stream.trim();
+let decoded;
+// Si ya es una URL, usarla directamente
+if (/^https?:\/\//i.test(stream)) {
+decoded = stream;
+} else {
+// Si no, intentar decodificar Base64
+stream = stream.replace(/[^A-Za-z0-9+/=]/g, "");
+decoded = atob(stream);}
+const iframe = document.createElement('iframe');
+iframe.src = decoded;
+iframe.allowFullscreen = true;
+iframe.setAttribute('frameborder', '0');
+iframe.setAttribute('scrolling', 'no');
+iframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen; picture-in-picture');
+//iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+iframe.setAttribute('referrerpolicy', 'no-referrer');
+// Agregar sandbox solo si type=yes
+if (type === "yes") {
+iframe.setAttribute("sandbox", "allow-same-origin allow-scripts");}
+target.appendChild(iframe);
+} catch (e) {
+target.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#E50914;font-size:20px;font-weight:bold;">ERROR DE SEÑAL</div>';}
+} else {
+target.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#FFC107;font-size:20px;font-weight:bold;">ESPERANDO SEÑAL...</div>';}})();
+</script>
+</body>
+</html>
